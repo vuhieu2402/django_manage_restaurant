@@ -1,0 +1,29 @@
+<h2>Lịch sử mua hàng</h2>
+
+{% for order in orders %}
+    <div class="order">
+        <h3>Ngày: {{ order.order_date }}</h3>
+        <p>Tổng giá: {{ order.total_price }} - Trạng thái: {{ order.get_status_display }}</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên món</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.orderdetails_set.all %}
+                <tr>
+                    <td>{{ item.dish_id.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price }}</td>
+                    <td>{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endfor %}

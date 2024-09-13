@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân</title>
+</head>
+<body>
+    <!-- Header với nút Home và Logout -->
+    <header>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'profile' %}">Thông tin cá nhân</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </nav>
+
+    </header>
+
+    <!-- Thông tin cá nhân của khách hàng -->
+    <div class="profile-info">
+        <h1>Thông tin cá nhân</h1>
+        <p><strong>Tên người dùng:</strong> {{ customer.username }}</p>
+        <p><strong>Email:</strong> {{ customer.email }}</p>
+        <p><strong>Số điện thoại:</strong> {{ customer.phone }}</p>
+        <p><strong>Địa chỉ:</strong> {{ customer.address }}</p>
+        <p><strong>Ngày tham gia:</strong> {{ customer.date_joined }}</p>
+    </div>
+</body>
+</html>
