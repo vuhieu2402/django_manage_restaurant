@@ -26,4 +26,5 @@ urlpatterns = [
     path('', include('checkout.urls')),
     path('', include('order.urls')),
     path('', include('book.urls')),
+    path('', include('search.urls')),
 ]

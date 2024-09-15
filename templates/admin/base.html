@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Product Admin - Dashboard HTML Template</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+    <!-- https://fonts.google.com/specimen/Roboto -->
+
+
+    {% block cssblock %}
+    {% endblock %}
+    <!--
+	Product Admin CSS Template
+	https://templatemo.com/tm-524-product-admin
+	-->
+</head>
+
+<body id="reportsPage">
+    <div class="home">
+        {% include 'admin/navbar.html' %}
+
+        {% block content %}
+        {% endblock %}
+
+        {% include 'admin/footer.html' %}
+
+        {% block jsblock %}
+        {% endblock %}
+    </div>
+</body>
+</html>

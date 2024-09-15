@@ -1,4 +1,4 @@
-from encodings.punycode import adapt
+
 
 from django.shortcuts import render
 from django.shortcuts import render, redirect
@@ -17,6 +17,14 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_str
 from django.utils.encoding import force_bytes
+from order.models import Order, OrderDetails
+from home.models import Dish
+from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Sum
+from django.utils import timezone
+from datetime import timedelta
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 
@@ -34,11 +42,26 @@ def login_view(request):
         if user is not None:
             login(request, user)
             refresh = RefreshToken.for_user(user)
-            return redirect('home')
-            # return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)})
+
+            # Lưu token vào session hoặc gửi lại cho client
+            request.session['access_token'] = str(refresh.access_token)
+            request.session['refresh_token'] = str(refresh)
+
+            # Kiểm tra nếu người dùng là admin (superuser)
+            if user.is_superuser:
+                return redirect('admin_dashboard')  # Chuyển hướng đến trang quản lý admin
+
+            # Nếu là customer thì chuyển hướng đến trang home
+            return redirect('home')  # Chuyển hướng đến URL 'home'
 
         else:
             return JsonResponse({'error': 'Invalid credentials'}, status=400)
+
+        #     return redirect('home')
+        #     # return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)})
+        #
+        # else:
+        #     return JsonResponse({'error': 'Invalid credentials'}, status=400)
     return render(request, 'user/login.html')
 
 
@@ -136,3 +159,55 @@ def logout_view(request):
 
     logout(request)
     return redirect('home')
+
+
+
+def is_admin(user):
+    return user.is_superuser
+
+def admin_dashboard(request):
+    # Lấy ngày hiện tại và tính toán tuần
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    dates_in_week = [start_of_week + timedelta(days=i) for i in range(7)]
+    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    # Lấy doanh thu mỗi ngày trong tuần
+    revenues_per_day = [
+        float(Order.objects.filter(order_date__date=date).aggregate(total=Sum('total_price'))['total'] or 0)
+        for date in dates_in_week
+    ]
+
+    # Chuẩn bị dữ liệu cho biểu đồ doanh thu theo ngày
+    revenue_chart_data = {
+        'labels': days_of_week,
+        'data': revenues_per_day,
+    }
+    revenue_chart_data_json = json.dumps(revenue_chart_data, cls=DjangoJSONEncoder)
+
+    # Lấy danh sách các món ăn và tính toán doanh thu, số lượng bán
+    dishes = Dish.objects.all()
+    dish_names = []
+    dish_quantities = []
+    dish_revenues = []
+
+    for dish in dishes:
+        total_quantity = OrderDetails.objects.filter(dish_id=dish).aggregate(total=Sum('quantity'))['total'] or 0
+        total_revenue = (OrderDetails.objects.filter(dish_id=dish).aggregate(total=Sum('quantity'))['total'] or 0) * dish.price
+        dish_quantities.append(float(total_quantity))
+        dish_revenues.append(float(total_revenue))
+        dish_names.append(dish.name)
+
+    # Chuẩn bị dữ liệu cho biểu đồ doanh thu hoặc số lượng bán của từng món
+    dish_chart_data = {
+        'labels': dish_names,
+        'quantities': dish_quantities,
+        'revenues': dish_revenues,
+    }
+    dish_chart_data_json = json.dumps(dish_chart_data, cls=DjangoJSONEncoder)
+
+    context = {
+        'revenue_chart_data_json': revenue_chart_data_json,
+        'dish_chart_data_json': dish_chart_data_json,
+    }
+    return render(request, 'admin/index.html', context)

@@ -1,0 +1,117 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href="{% static 'admin/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/templatemo-style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas {
+            width: 100% !important;
+            height: 400px !important;
+        }
+        .tm-block {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- ... phần khác ... -->
+
+    <div class="row tm-content-row">
+        <!-- Biểu đồ doanh thu theo ngày -->
+        <div class="col-lg-6">
+            <div class="tm-bg-primary-dark tm-block">
+                <h2>Doanh thu theo ngày trong tuần</h2>
+                <canvas id="revenueChart"></canvas>
+                <!-- Chứa dữ liệu JSON cho biểu đồ doanh thu -->
+                <script id="revenue_data" type="application/json">{{ revenue_chart_data_json|safe }}</script>
+            </div>
+        </div>
+        <!-- Biểu đồ doanh thu hoặc số lượng bán được của từng món -->
+        <div class="col-lg-6">
+            <div class="tm-bg-primary-dark tm-block">
+                <h2>Doanh thu/Số lượng bán được của từng món</h2>
+                <canvas id="dishChart"></canvas>
+                <!-- Chứa dữ liệu JSON cho biểu đồ món ăn -->
+                <script id="dish_data" type="application/json">{{ dish_chart_data_json|safe }}</script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript để tạo biểu đồ -->
+<script>
+    // Lấy dữ liệu từ thẻ script JSON và in ra console
+    var revenueChartData = JSON.parse(document.getElementById('revenue_data').textContent);
+    var dishChartData = JSON.parse(document.getElementById('dish_data').textContent);
+
+    console.log("Revenue Chart Data:", revenueChartData);
+    console.log("Dish Chart Data:", dishChartData);
+
+    // Biểu đồ doanh thu
+    var ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    var revenueChart = new Chart(ctxRevenue, {
+        type: 'bar',
+        data: {
+            labels: revenueChartData.labels,
+            datasets: [{
+                label: 'Doanh thu',
+                data: revenueChartData.data,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' VND';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Biểu đồ món ăn
+    var ctxDish = document.getElementById('dishChart').getContext('2d');
+    var dishChart = new Chart(ctxDish, {
+        type: 'bar',
+        data: {
+            labels: dishChartData.labels,
+            datasets: [
+                {
+                    label: 'Số lượng bán',
+                    data: dishChartData.quantities,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255,99,132,1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Doanh thu',
+                    data: dishChartData.revenues,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75,192,192,1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

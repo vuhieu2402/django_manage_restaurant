@@ -90,11 +90,23 @@
                 </g>
               </svg>
             </a>
-            <form class="form-inline">
-              <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </form>
+<!--            <form class="form-inline">-->
+<!--              <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit">-->
+<!--                <i class="fa fa-search" aria-hidden="true"></i>-->
+<!--              </button>-->
+<!--            </form>-->
+              <form class="form-inline" id="search-form" method="GET" action="{% url 'search' %}">
+                <div class="input-group">
+                  <input id="search-input" class="form-control" type="text" name="q" placeholder="Search for dishes..." style="display: none;">
+                  <div class="input-group-append">
+                    <button class="btn my-2 my-sm-0 nav_search-btn" type="button" id="search-btn">
+                      <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+
             <a href="" class="order_online">
               Order Online
             </a>
@@ -184,3 +196,20 @@
   </section>
   <!-- end slider section -->
 </div>
+<script>
+  let isSearchVisible = false;
+
+  document.getElementById('search-btn').addEventListener('click', function() {
+    const searchInput = document.getElementById('search-input');
+
+    if (!isSearchVisible) {
+      // Hiển thị ô tìm kiếm
+      searchInput.style.display = 'block';
+      searchInput.focus();  // Tự động focus vào ô tìm kiếm
+      isSearchVisible = true;
+    } else if (searchInput.value.trim() !== "") {
+      // Nếu ô tìm kiếm đã hiển thị và có giá trị thì submit form
+      document.getElementById('search-form').submit();
+    }
+  });
+</script>
