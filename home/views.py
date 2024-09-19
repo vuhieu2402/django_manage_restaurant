@@ -1,6 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .models import Category, Dish, Info
+from .forms import DishForm
+
+
 # Create your views here.
 
 class HomePageView(View):
@@ -59,4 +62,26 @@ class AboutPageView(View):
 class BookPageView(View):
     def get(self, request):
         return render(request, 'home/book.html', {})
+
+
+
+def product_view(request):
+    dish = Dish.objects.all()
+    category = Category.objects.all()
+    return render(request, 'admin/product.html', {'dishes': dish, 'categories': category})
+
+
+def add_product(request):
+    if request.method == 'POST':
+        form = DishForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('products')
+
+    else:
+        form = DishForm()
+
+    categories = Category.objects.all()
+
+    return render(request, 'admin/add_product.html', {'form': form, 'categories': categories})
 

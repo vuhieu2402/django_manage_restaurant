@@ -1,6 +1,6 @@
 
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -25,6 +25,7 @@ from django.utils import timezone
 from datetime import timedelta
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django import template
 
 
 
@@ -163,8 +164,9 @@ def logout_view(request):
 
 
 def is_admin(user):
-    return user.is_superuser
+    return user.is_superuser and user.is_authenticated
 
+@user_passes_test(is_admin, login_url='/login/')
 def admin_dashboard(request):
     # Lấy ngày hiện tại và tính toán tuần
     today = timezone.now().date()
@@ -206,8 +208,25 @@ def admin_dashboard(request):
     }
     dish_chart_data_json = json.dumps(dish_chart_data, cls=DjangoJSONEncoder)
 
+    orders = Order.objects.all().order_by('-id')
+
     context = {
         'revenue_chart_data_json': revenue_chart_data_json,
         'dish_chart_data_json': dish_chart_data_json,
+        'orders': orders,
     }
     return render(request, 'admin/index.html', context)
+
+
+
+
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_items = OrderDetails.objects.filter(order_id=order)
+
+
+    context = {
+        'order': order,
+        'order_items': order_items,
+    }
+    return render(request, 'admin/order_detail.html', context)

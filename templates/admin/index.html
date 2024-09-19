@@ -41,8 +41,52 @@
                 <script id="dish_data" type="application/json">{{ dish_chart_data_json|safe }}</script>
             </div>
         </div>
+
+        <div class="col-12 tm-block-col">
+    <div class="tm-bg-primary-dark tm-block tm-block-taller tm-block-scroll">
+        <h2 class="tm-block-title">Orders List</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ORDER NO.</th>
+                    <th scope="col">STATUS</th>
+                    <th scope="col">CUSTOMER</th>
+                    <th scope="col">DATE</th>
+                    <th scope="col">TOTAL PRICE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr data-href="{% url 'order_detail' order.id %}" style="cursor: pointer;">
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.order_date }}</td>
+                    <td>{{ order.total_price }} VND</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
+
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tìm tất cả các hàng (tr) có thuộc tính data-href
+        var rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(function(row) {
+            // Gắn sự kiện click cho từng hàng
+            row.addEventListener("click", function() {
+                window.location.href = this.dataset.href;  // Chuyển hướng tới đường dẫn trong data-href
+            });
+        });
+    });
+</script>
 
 <!-- JavaScript để tạo biểu đồ -->
 <script>

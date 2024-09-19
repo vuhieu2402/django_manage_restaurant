@@ -1,0 +1,41 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href="{% static 'admin/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/templatemo-style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Chi tiết đơn hàng #{{ order.id }}</h2>
+    <p><strong>Khách hàng:</strong> {{ order.user_id.username }}</p>
+    <p><strong>Email:</strong> {{ order.user_id.email }}</p>
+    <p><strong>Tổng giá:</strong> {{ order.total_price }} VND</p>
+    <p><strong>Trạng thái:</strong> {% if order.status %}Đã thanh toán{% else %}Chưa thanh toán{% endif %}</p>
+
+    <h3>Chi tiết món ăn:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Món ăn</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item.dish_id.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price }} VND</td>
+                <td>{{ item.quantity|floatformat:2|add:"0" |floatformat:2|add:"0" |floatformat:2 }} VND</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
