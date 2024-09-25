@@ -36,7 +36,7 @@ class Customer(AbstractUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True, max_length=100)
     password = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15, unique=True)
+    phone = models.CharField(max_length=15)
     address = models.CharField(max_length=200)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

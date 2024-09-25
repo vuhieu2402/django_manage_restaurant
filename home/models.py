@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from cloudinary.models import CloudinaryField
 
 
 class Category(models.Model):
@@ -17,7 +18,7 @@ class Dish(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(default='')
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    url_img = models.URLField(blank=True)
+    url_img = CloudinaryField('image', blank=True, null=True)
 
 
     def __str__(self):

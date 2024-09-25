@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_str
 from django.utils.encoding import force_bytes
 from order.models import Order, OrderDetails
-from home.models import Dish
+from home.models import Dish, Category
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Sum
 from django.utils import timezone
@@ -48,9 +48,9 @@ def login_view(request):
             request.session['access_token'] = str(refresh.access_token)
             request.session['refresh_token'] = str(refresh)
 
-            # Kiểm tra nếu người dùng là admin (superuser)
+            # Kiểm tra nếu người dùng là dashboard (superuser)
             if user.is_superuser:
-                return redirect('admin_dashboard')  # Chuyển hướng đến trang quản lý admin
+                return redirect('admin_dashboard')  # Chuyển hướng đến trang quản lý dashboard
 
             # Nếu là customer thì chuyển hướng đến trang home
             return redirect('home')  # Chuyển hướng đến URL 'home'
@@ -215,7 +215,9 @@ def admin_dashboard(request):
         'dish_chart_data_json': dish_chart_data_json,
         'orders': orders,
     }
-    return render(request, 'admin/index.html', context)
+    return render(request, 'dashboard/index.html', context)
+
+
 
 
 
@@ -229,4 +231,25 @@ def order_detail(request, order_id):
         'order': order,
         'order_items': order_items,
     }
-    return render(request, 'admin/order_detail.html', context)
+    return render(request, 'dashboard/order_detail.html', context)
+
+
+@user_passes_test(is_admin, login_url='/login/')
+def delete_dish_view(request, dish_id):
+    product = get_object_or_404(Dish, id=dish_id)
+    product.delete()
+    return redirect('products')
+
+@user_passes_test(is_admin, login_url='/login/')
+def delete_selected(request):
+    if request.method == 'POST':
+        selected_dishes = request.POST.getlist('selected_dishes')
+        if selected_dishes is not None:
+            Dish.objects.filter(id__in=selected_dishes).delete()
+    return redirect('products')
+
+@user_passes_test(is_admin, login_url='/login/')
+def delete_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    category.delete()
+    return redirect('products')

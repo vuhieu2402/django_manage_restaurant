@@ -1,7 +1,12 @@
+from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+
+from user.views import is_admin
 from .models import Category, Dish, Info
 from .forms import DishForm
+
 
 
 # Create your views here.
@@ -65,12 +70,14 @@ class BookPageView(View):
 
 
 
+@user_passes_test(is_admin, login_url='/login/')
 def product_view(request):
     dish = Dish.objects.all()
     category = Category.objects.all()
-    return render(request, 'admin/product.html', {'dishes': dish, 'categories': category})
+    return render(request, 'dashboard/product.html', {'dishes': dish, 'categories': category})
 
 
+@user_passes_test(is_admin, login_url='/login/')
 def add_product(request):
     if request.method == 'POST':
         form = DishForm(request.POST, request.FILES)
@@ -83,5 +90,12 @@ def add_product(request):
 
     categories = Category.objects.all()
 
-    return render(request, 'admin/add_product.html', {'form': form, 'categories': categories})
+    return render(request, 'dashboard/add_product.html', {'form': form, 'categories': categories})
+
+
+
+
+
+
+
 

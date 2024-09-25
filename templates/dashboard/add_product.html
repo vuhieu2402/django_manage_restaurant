@@ -1,4 +1,4 @@
-{% extends 'admin/base.html' %}
+{% extends 'dashboard/base.html' %}
 {% load static %}
 
 {% block cssblock %}
@@ -25,49 +25,50 @@
                 </div>
                 <div class="row tm-edit-product-row">
                     <div class="col-xl-6 col-lg-6 col-md-12">
+                        <!-- Thêm method POST và enctype để upload file -->
                         <form method="POST" enctype="multipart/form-data" class="tm-edit-product-form">
                             {% csrf_token %}
+
                             <!-- Product Name -->
                             <div class="form-group mb-3">
                                 <label for="name">Product Name</label>
-                                <input id="name" name="name" type="text" class="form-control validate" required value="{{ form.name.value }}" />
+                                {{ form.name }}
                             </div>
 
                             <!-- Description -->
                             <div class="form-group mb-3">
                                 <label for="description">Description</label>
-                                <textarea id="description" name="description" class="form-control validate" rows="3" required>{{ form.description.value }}</textarea>
+                                {{ form.description }}
                             </div>
 
                             <!-- Category -->
                             <div class="form-group mb-3">
                                 <label for="category">Category</label>
-                                <select id="category" name="category" class="custom-select tm-select-accounts">
-                                    {% for category in categories %}
-                                    <option value="{{ category.id }}" {% if form.category.value == category.id %}selected{% endif %}>{{ category.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                {{ form.category }}
                             </div>
 
-                            <!-- Expire Date and Stock -->
-                            <div class="row">
-                                <div class="form-group mb-3 col-xs-12 col-sm-6">
-                                    <label for="price">Price</label>
-                                    <input id="price" name="expire_date" type="text" class="form-control validate" required value="{{ form.price.value }}" />
-                                </div>
+                            <!-- Price -->
+                            <div class="form-group mb-3">
+                                <label for="price">Price</label>
+                                {{ form.price }}
                             </div>
-
                     </div>
 
                     <!-- Upload Product Image -->
                     <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
-                        <div class="tm-product-img-dummy mx-auto">
+                        <!-- Placeholder hình ảnh, ban đầu sẽ là một icon -->
+                        <div class="tm-product-img-dummy mx-auto" id="image-placeholder">
                             <i class="fas fa-cloud-upload-alt tm-upload-icon" onclick="document.getElementById('fileInput').click();"></i>
+                            <!-- Thêm ảnh preview -->
+                            <img id="output-image" src="" alt="Preview Image" style="max-width: 100%; display: none;" />
                         </div>
+
                         <div class="custom-file mt-3 mb-3">
                             <!-- Hide the default Django field -->
                             {{ form.url_img }}
-                            <input id="fileInput" name="url_img" type="file" style="display:none;" />
+                            <!-- Input để chọn file ảnh -->
+                            <input id="fileInput" name="url_img" type="file" style="display:none;" onchange="previewImage(event)" />
+                            <!-- Nút để trigger hộp thoại chọn file -->
                             <input type="button" class="btn btn-primary btn-block mx-auto" value="UPLOAD PRODUCT IMAGE" onclick="document.getElementById('fileInput').click();" />
                         </div>
                     </div>
@@ -83,9 +84,37 @@
     </div>
 </div>
 
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        var reader = new FileReader();
+
+        reader.onload = function() {
+            // Lấy phần img để hiển thị ảnh
+            var output = document.getElementById('output-image');
+            output.src = reader.result; // Đặt src của ảnh bằng nội dung file đã chọn
+            output.style.display = 'block'; // Hiển thị ảnh
+            document.querySelector('.tm-upload-icon').style.display = 'none'; // Ẩn icon upload
+        };
+
+        // Nếu có file được chọn
+        if (input.files && input.files[0]) {
+            reader.readAsDataURL(input.files[0]); // Đọc nội dung của file ảnh
+        }
+    }
+</script>
+
+
 
 {% endblock %}
 
 
 {% block jsblock %}
+ <script src="{% static 'admin/js/jquery-3.3.1.min.js' %}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="{% static 'admin/jquery-ui-datepicker/jquery-ui.min.js' %}"></script>
+    <!-- https://jqueryui.com/download/ -->
+    <script src="{% static 'admin/js/bootstrap.min.js' %}"></script>
+    <!-- https://getbootstrap.com/ -->
+
 {% endblock %}

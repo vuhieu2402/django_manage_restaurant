@@ -17,16 +17,30 @@
 	Product Admin CSS Template
 	https://templatemo.com/tm-524-product-admin
 	-->
+    <style>
+        input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          accent-color: blue; /* Đặt màu cho dấu tích */
+        }
+
+        input[type="checkbox"]:checked {
+          background-color: grey; /* Màu nền khi chọn */
+          border: 2px solid gray; /* Đường viền khi chọn */
+        }
+
+
+    </style>
 </head>
 
 <body id="reportsPage">
     <div class="home">
-        {% include 'admin/navbar.html' %}
+        {% include 'dashboard/navbar.html' %}
 
         {% block content %}
         {% endblock %}
 
-        {% include 'admin/footer.html' %}
+        {% include 'dashboard/footer.html' %}
 
         {% block jsblock %}
         {% endblock %}

@@ -1,12 +1,9 @@
-{% extends 'admin/base.html' %}
+{% extends 'dashboard/base.html' %}
 {% load static %}
 
 
 {% block cssblock %}
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Roboto:400,700"
-    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700"/>
     <link rel="stylesheet" href="{% static 'admin/css/fontawesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'admin/css/templatemo-style.css' %}">
@@ -17,12 +14,14 @@
     <div class="container mt-5">
       <div class="row tm-content-row">
         <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8 tm-block-col">
-          <div class="tm-bg-primary-dark tm-block tm-block-products">
+          <form method="POST" action="{% url 'delete_selected' %}">
+            {% csrf_token %}
+            <div class="tm-bg-primary-dark tm-block tm-block-products">
             <div class="tm-product-table-container">
-              <table class="table table-hover tm-table-small tm-product-table">
+                <table class="table table-hover tm-table-small tm-product-table">
                 <thead>
                   <tr>
-                    <th scope="col">&nbsp;</th>
+                    <th scope="col">&nbsp;&nbsp;</th>
                     <th scope="col">PRODUCT NAME</th>
                     <th scope="col">PRICE</th>
                     <th scope="col">&nbsp;</th>
@@ -31,11 +30,11 @@
                 <tbody>
                 {% for dish in dishes %}
                   <tr>
-                    <th scope="row"><input type="checkbox" /></th>
+                    <th scope="row"><input type="checkbox" name="selected_dishes" value="{{ dish.id }}" /></th>
                     <td class="tm-product-name">{{ dish.name }}</td>
                     <td>{{ dish.price }}</td>
                     <td>
-                      <a href="#" class="tm-product-delete-link">
+                      <a href="{% url 'delete_dish_view' dish.id %}" class="tm-product-delete-link" onclick="return confirmDelete();">
                         <i class="far fa-trash-alt tm-product-delete-icon"></i>
                       </a>
                     </td>
@@ -52,6 +51,7 @@
               Delete selected products
             </button>
           </div>
+          </form>
         </div>
         <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4 tm-block-col">
           <div class="tm-bg-primary-dark tm-block tm-block-product-categories">
@@ -80,6 +80,12 @@
         </div>
       </div>
     </div>
+
+<script>
+  function confirmDelete() {
+      return confirm("Are you sure you want to delete this product?");
+  }
+</script>
 
 <script>
       $(function() {
