@@ -1,0 +1,66 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700"/>
+    <link rel="stylesheet" href="{% static 'admin/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/templatemo-style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>Monthly Report for {{ month }}/{{ year }}</h1>
+<p>Total Quantity: {{ total_quantity }}</p>
+<p>Total Revenue: {{ total_revenue }}</p>
+
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Total Price</th>
+        <th>Order Date</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.total_price }}</td>
+        <td>{{ order.order_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Form chọn tháng và năm -->
+<form action="{% url 'monthly_report' %}" method="get">
+    <select name="month">
+        {% for i in months %}
+            <option value="{{ i }}" {% if i == month %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+    </select>
+    <input type="number" name="year" value="{{ year }}" min="2000" max="2100">
+    <button type="submit">Generate Monthly Report</button>
+</form>
+
+<!-- Button to export monthly report -->
+<form action="{% url 'export_report' 'monthly' %}" method="get">
+    <input type="hidden" name="month" value="{{ month }}">
+    <input type="hidden" name="year" value="{{ year }}">
+    <button type="submit">Export Monthly Report</button>
+</form>
+
+
+
+
+{% endblock %}
+
+
+{% block jsblock %}
+       <script src="{% static 'admin/js/jquery-3.3.1.min.js' %}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="{% static 'admin/js/moment.min.js' %}"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="{% static 'admin/js/Chart.min.js' %}" ></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="{% static 'admin/js/bootstrap.min.js' %}"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="{% static 'admin/js/tooplate-scripts.js' %}"></script>
+{% endblock %}

@@ -27,4 +27,5 @@ urlpatterns = [
     path('', include('order.urls')),
     path('', include('book.urls')),
     path('', include('search.urls')),
+    path('', include('report.urls'))
 ]

@@ -1,0 +1,37 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700"/>
+    <link rel="stylesheet" href="{% static 'admin/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/templatemo-style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Select Report Type</h2>
+    <div class="btn-group">
+        <a href="{% url 'daily_report' %}" class="btn btn-primary">Daily Report</a>
+        <a href="{% url 'weekly_report' %}" class="btn btn-secondary">Weekly Report</a>
+        <a href="{% url 'monthly_report' %}" class="btn btn-info">Monthly Report</a>
+        <a href="{% url 'yearly_report' %}" class="btn btn-success">Yearly Report</a>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block jsblock %}
+       <script src="{% static 'admin/js/jquery-3.3.1.min.js' %}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="{% static 'admin/js/moment.min.js' %}"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="{% static 'admin/js/Chart.min.js' %}" ></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="{% static 'admin/js/bootstrap.min.js' %}"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="{% static 'admin/js/tooplate-scripts.js' %}"></script>
+{% endblock %}

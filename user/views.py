@@ -253,3 +253,30 @@ def delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     category.delete()
     return redirect('products')
+
+@user_passes_test(is_admin, login_url='/login/')
+def product_detail(request, dish_id):
+    product = get_object_or_404(Dish, id=dish_id)
+    categories = Category.objects.all()
+    context = {
+        'product': product,
+        'categories': categories,
+    }
+    return render(request, 'dashboard/product_detail.html', context)
+
+def edit_product(request, dish_id):
+    product = get_object_or_404(Dish, id=dish_id)
+    categories = Category.objects.all()
+    if request.method == 'POST':
+        product.name = request.POST.get('name')  # Sửa lại ở đây
+        product.description = request.POST.get('description')
+        product.price = request.POST.get('price')
+        product.category_id = request.POST.get('category')
+
+        if request.FILES.get('url_img'):
+            product.url_img = request.FILES.get('url_img')
+
+        product.save()
+        return redirect('products')
+
+    return render(request, 'dashboard/product_detail.html', {'product': product, 'categories': categories})

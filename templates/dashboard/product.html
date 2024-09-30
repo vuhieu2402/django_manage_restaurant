@@ -31,7 +31,9 @@
                 {% for dish in dishes %}
                   <tr>
                     <th scope="row"><input type="checkbox" name="selected_dishes" value="{{ dish.id }}" /></th>
-                    <td class="tm-product-name">{{ dish.name }}</td>
+                    <td class="tm-product-name">
+                        <a href="{% url 'product_detail' dish.id %}">{{ dish.name }}</a>
+                    </td>
                     <td>{{ dish.price }}</td>
                     <td>
                       <a href="{% url 'delete_dish_view' dish.id %}" class="tm-product-delete-link" onclick="return confirmDelete();">

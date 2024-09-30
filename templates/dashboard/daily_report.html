@@ -1,0 +1,63 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700"/>
+    <link rel="stylesheet" href="{% static 'admin/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/templatemo-style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<h2>Daily Report</h2>
+<form method="POST">
+    {% csrf_token %}
+    <label for="date">Select a date:</label>
+    <input type="date" id="selected_date" name="selected_date">
+    <button type="submit">Generate Report</button>
+</form>
+
+{% if selected_date %}
+    <h3>Report for {{ selected_date }}</h3>
+    <p>Total Revenue: {{ total_revenue }}</p>
+    <h4>Products Sold:</h4>
+    <table>
+        <tr>
+            <th>Dish Name</th>
+            <th>Total Quantity Sold</th>
+            <th>Unit Price</th>
+        </tr>
+        {% for product in products_sold %}
+        <tr>
+            <td>{{ product.dish_id__name }}</td>
+            <td>{{ product.total_quantity }}</td>
+            <td>{{ product.unit_price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- Button to export report -->
+    <form action="{% url 'export_report' 'daily' %}" method="get">
+        <input type="hidden" name="selected_date" value="{{ selected_date|date:'Y-m-d' }}">
+        <button type="submit">Export Daily Report</button>
+    </form>
+
+{% endif %}
+
+
+
+{% endblock %}
+
+
+{% block jsblock %}
+       <script src="{% static 'admin/js/jquery-3.3.1.min.js' %}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="{% static 'admin/js/moment.min.js' %}"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="{% static 'admin/js/Chart.min.js' %}" ></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="{% static 'admin/js/bootstrap.min.js' %}"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="{% static 'admin/js/tooplate-scripts.js' %}"></script>
+{% endblock %}

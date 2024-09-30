@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'search',
     'cloudinary',
     'cloudinary_storage',
+    'report',
 ]
 
 MIDDLEWARE = [
