@@ -12,6 +12,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
+
+from chatbox.models import ChatSession
 from .models import  Customer
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
@@ -209,11 +211,14 @@ def admin_dashboard(request):
     dish_chart_data_json = json.dumps(dish_chart_data, cls=DjangoJSONEncoder)
 
     orders = Order.objects.all().order_by('-id')
+    # context cần có thêm chat_sessions cho navbar
+    chat_sessions = ChatSession.objects.select_related('customer').all()
 
     context = {
         'revenue_chart_data_json': revenue_chart_data_json,
         'dish_chart_data_json': dish_chart_data_json,
         'orders': orders,
+        'chat_sessions': chat_sessions,
     }
     return render(request, 'dashboard/index.html', context)
 

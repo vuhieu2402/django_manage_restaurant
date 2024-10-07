@@ -1,18 +1,99 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <!-- Basic -->
-  <meta charset="utf-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Mobile Metas -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Site Metas -->
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-   <title> Restaurant </title>
+  <title>Restaurant</title>
+    <style>
+
+
+    /* Style cho biểu tượng chat bot */
+    /* Style cho biểu tượng chat bot */
+#chatbot-icon {
+  position: fixed; /* Vị trí cố định trên màn hình */
+  bottom: 20px;    /* Cách đáy màn hình 20px */
+  left: 20px;      /* Cách trái màn hình 20px */
+  width: 60px;
+  height: 60px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999; /* Luôn hiển thị trên các phần tử khác */
+}
+
+/* Style cho khung chat */
+#chatbot-box {
+  display: none; /* Ban đầu ẩn */
+  position: fixed; /* Vị trí cố định trên màn hình */
+  bottom: 90px; /* Cách đáy màn hình 90px */
+  left: 20px; /* Cách trái màn hình 20px */
+  width: 300px;
+  height: 400px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999; /* Đảm bảo luôn ở trên các thành phần khác */
+}
+
+/* Đảm bảo rằng chatbot luôn cố định ở cuối màn hình, không bị cuộn */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+
+
+    /* Phần đầu của khung chat */
+    #chatbot-box .header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Nội dung chat */
+    #chatbot-box .messages {
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      background-color: #f7f7f7;
+    }
+
+    /* Phần nhập tin nhắn */
+    #chatbot-box .input-box {
+      padding: 10px;
+      display: flex;
+    }
+
+    #chatbot-box input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #chatbot-box button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+      border-radius: 4px;
+    }
+  </style>
 
   {% block cssblock %}
   {% endblock %}
@@ -22,12 +103,17 @@
 
   {% include 'home/navbar.html' %}
 
+      <!-- Chatbot icon -->
+
   {% block content %}
   {% endblock %}
+
 
   {% include 'home/footer.html' %}
 
   {% block jsblock %}
+
   {% endblock %}
 </body>
+
 </html>

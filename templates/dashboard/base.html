@@ -31,6 +31,108 @@
 
 
     </style>
+<style>
+    /* Style cho biểu tượng chat bot */
+    #chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+    }
+
+    /* Khung chứa danh sách khách hàng và khung chat */
+    #chat-wrapper {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      width: 600px;
+      height: 400px;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      display: flex; /* Hiển thị theo hàng ngang */
+    }
+
+    /* Style cho khung danh sách khách hàng */
+    #customer-list {
+      width: 200px;
+      height: 100%;
+      background-color: #f0f0f0;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+
+    #customer-list .customer {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #customer-list .customer:hover {
+      background-color: #007bff;
+      color: white;
+    }
+
+    /* Style cho khung chat */
+    #chatbot-box {
+      flex: 1;
+      height: 100%;
+      background-color: white;
+    }
+
+    /* Phần đầu của khung chat */
+    #chatbot-box .header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Nội dung chat */
+    #chatbot-box .messages {
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      background-color: #f7f7f7;
+    }
+
+    /* Phần nhập tin nhắn */
+    #chatbot-box .input-box {
+      padding: 10px;
+      display: flex;
+    }
+
+    #chatbot-box input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #chatbot-box button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 
 <body id="reportsPage">

@@ -74,3 +74,119 @@
     </div>
 
 </nav>
+
+
+
+<div id="chatbot-icon">💬</div>
+
+<!-- Chat wrapper -->
+<div id="chat-wrapper" style="display: none;">
+  <div id="customer-list">
+    {% for session in chat_sessions %}
+      <form action="{% url 'get_chat_messages' session.id %}" method="post" class="customer-session-form">
+        {% csrf_token %}
+        <button type="button" class="customer-session" data-session-id="{{ session.id }}">
+          Khách hàng: {{ session.customer.username }}
+        </button>
+      </form>
+    {% empty %}
+      <p>Không có khách hàng nào đã gửi tin nhắn.</p>
+    {% endfor %}
+</div>
+
+
+
+  <div id="chatbot-box">
+    <div class="header">Nội dung cuộc trò chuyện</div>
+    <div class="messages" id="chat-messages">
+      <p>Vui lòng chọn một khách hàng để xem nội dung cuộc trò chuyện.</p>
+    </div>
+
+    <form id="chat-form" action="{% url 'send_message' %}" method="post">
+      {% csrf_token %}
+      <div class="input-box">
+        <input type="text" name="message" id="chat-input" placeholder="Nhập tin nhắn..." required>
+        <input type="hidden" name="session_id" id="session-id" value="">
+        <button type="submit" id="send-message">Gửi</button>
+      </div>
+    </form>
+</div>
+
+
+</div>
+
+<script>
+  const chatbotIcon = document.getElementById('chatbot-icon');
+  const chatWrapper = document.getElementById('chat-wrapper');
+
+  chatbotIcon.addEventListener('click', function() {
+    chatWrapper.style.display = (chatWrapper.style.display === 'none' || chatWrapper.style.display === '') ? 'flex' : 'none';
+  });
+</script>
+
+
+
+
+<script>
+  document.querySelectorAll('.customer-session').forEach(button => {
+  button.addEventListener('click', function() {
+    const sessionId = this.dataset.sessionId;
+
+    // AJAX để lấy tin nhắn từ URL /admin/get_chat_messages/<session_id>/
+    fetch(`/admin/get_chat_messages/${sessionId}/`, {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',  // Thêm header để chỉ ra rằng đây là yêu cầu AJAX
+        }
+      })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();  // Chuyển dữ liệu phản hồi thành JSON
+    })
+    .then(data => {
+      const chatMessagesDiv = document.getElementById('chat-messages');
+      chatMessagesDiv.innerHTML = '';  // Xóa nội dung cũ
+
+      if (data.messages && data.messages.length > 0) {
+        data.messages.forEach(msg => {
+          chatMessagesDiv.innerHTML += `<p><strong>${msg.sender}:</strong> ${msg.content}</p>`;
+        });
+      } else {
+        chatMessagesDiv.innerHTML = '<p>Không có tin nhắn nào.</p>';
+      }
+
+      // Cập nhật session_id cho form gửi tin nhắn
+      document.getElementById('session-id').value = sessionId;
+    })
+    .catch(error => console.error('Error:', error));
+  });
+});
+
+</script>
+
+
+
+<style>
+  .customer-session {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 5px 0;
+    background-color: #007bff; /* Màu nền */
+    color: white; /* Màu chữ */
+    text-decoration: none; /* Xóa gạch chân */
+    border-radius: 5px; /* Bo góc */
+  }
+
+  .customer-session:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+  }
+</style>
+
+
+
+
+
+
+

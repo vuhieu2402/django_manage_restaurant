@@ -194,22 +194,85 @@
     </div>
 
   </section>
-  <!-- end slider section -->
+
+
+
+  <div id="chatbot-icon">💬</div>
+
+  <!-- Chatbox -->
+  <div id="chatbot-box" style="display: none;">
+      <div class="header">Hỗ trợ trực tuyến</div>
+      <div class="messages" id="chat-messages">
+          <!-- Đây là nơi sẽ hiển thị các tin nhắn -->
+          <p>Chào quý khách, rất vui vì quý khách đã lựa chọn dịch vụ của chúng tôi.</p>
+          <p>Không biết quý khách muốn đặt câu hỏi nào cho cửa hàng?</p>
+      </div>
+      <div class="input-box">
+          <input type="text" id="chat-input" placeholder="Nhập câu hỏi của bạn...">
+          <button id="send-message">Gửi</button>
+      </div>
+  </div>
+
 </div>
+
 <script>
-  let isSearchVisible = false;
+    // Hiển thị và ẩn khung chat khi click vào biểu tượng chat
+    const chatbotIcon = document.getElementById('chatbot-icon');
+    const chatbotBox = document.getElementById('chatbot-box');
 
-  document.getElementById('search-btn').addEventListener('click', function() {
-    const searchInput = document.getElementById('search-input');
+    chatbotIcon.addEventListener('click', function() {
+        if (chatbotBox.style.display === 'none' || chatbotBox.style.display === '') {
+            chatbotBox.style.display = 'block';
+            loadMessages();  // Tải tin nhắn khi mở chatbox
+        } else {
+            chatbotBox.style.display = 'none';
+        }
+    });
 
-    if (!isSearchVisible) {
-      // Hiển thị ô tìm kiếm
-      searchInput.style.display = 'block';
-      searchInput.focus();  // Tự động focus vào ô tìm kiếm
-      isSearchVisible = true;
-    } else if (searchInput.value.trim() !== "") {
-      // Nếu ô tìm kiếm đã hiển thị và có giá trị thì submit form
-      document.getElementById('search-form').submit();
+    // Xử lý khi gửi tin nhắn
+    const sendMessageButton = document.getElementById('send-message');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+
+    sendMessageButton.addEventListener('click', function() {
+        const message = chatInput.value.trim();
+        if (message) {
+            const csrfToken = '{{ csrf_token }}';  // Lấy token CSRF
+            fetch('/send_message/', {  // Gọi API để gửi tin nhắn
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({
+                    'message': message
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    chatInput.value = '';  // Xóa nội dung trong input sau khi gửi
+                    loadMessages();  // Tải lại tin nhắn sau khi gửi
+                }
+            });
+        }
+    });
+
+    // Hàm tải tin nhắn
+    function loadMessages() {
+        fetch('/load_chatbox/')  // Gọi API để lấy tin nhắn
+            .then(response => response.json())
+            .then(data => {
+                chatMessages.innerHTML = '';  // Xóa các tin nhắn cũ
+                data.messages.forEach(msg => {
+                    const newMessage = document.createElement('p');
+                    newMessage.textContent = `${msg.sender}: ${msg.content}`;
+                    chatMessages.appendChild(newMessage);
+                });
+                chatMessages.scrollTop = chatMessages.scrollHeight;  // Tự động cuộn xuống cuối
+            });
     }
-  });
+
+    // Định kỳ tải tin nhắn mới
+    setInterval(loadMessages, 5000);
 </script>
+
